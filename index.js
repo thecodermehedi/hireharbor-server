@@ -47,6 +47,31 @@ const connectToMongoDB = async () => {
       }
     });
 
+    //! GET ALL JOBS
+    // http://localhost:3000/api/v1/jobs situation 1
+    // http://localhost:3000/api/v1/jobs?category=part-time situation 2
+    app.get("/api/v1/jobs", async (req, res) => {
+      try {
+        let query = {};
+        if (req?.query?.category) {
+          query.category = req?.query?.category;
+        }
+        const options = {
+          projection: {
+            company: 0,
+            logo: 0,
+            banner: 0,
+            desc: 0,
+          },
+        };
+        const jobs = await jobsCollection.find(query, options).toArray();
+        res.send(jobs);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
+
 
   } catch (error) {
     console.log(error);
