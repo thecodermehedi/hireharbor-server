@@ -154,7 +154,20 @@ const connectToMongoDB = async () => {
 
 
 
-
+   //! UPDATE A POSTED JOB
+    // http://localhost:3000/api/v1/postedjobs/654713acdfaace3a2427f482
+    app.patch("/api/v1/postedjobs/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const job = req.body;
+        const filter = {_id: new ObjectId(id)};
+        const result = await jobsCollection.updateOne(filter, job);
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
 
