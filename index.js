@@ -2,6 +2,8 @@ const express = require("express");
 const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
 require("dotenv").config();
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 //! Application Settings
 const app = express();
@@ -10,6 +12,7 @@ const port = process.env.PORT || 3000;
 //! Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 //! MongoDB URI
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@hireharborcluster.i3brrrj.mongodb.net/?retryWrites=true&w=majority`;
@@ -34,6 +37,21 @@ const connectToMongoDB = async () => {
     const jobsCollection = db.collection("jobs");
     const applicationsCollection = db.collection("applications");
     const categoriesCollection = db.collection("categories");
+
+    //! VERIFY ACCESS TOKEN (MIDDLEWARE)
+    const verifyAccessToken = (req, res, next) => {
+      const token = req?.cookies?.token;
+      if (!token) {
+        return res.status(401).send({message: "Unauthorized access"});
+      }
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+          return res.status(403).send({message: "Invalid token"});
+        }
+        req.user = decoded;
+        next();
+      });
+    };
 
     //! GET ALL JOB CATEGORIES
     // http://localhost:3000/api/v1/categories
@@ -86,7 +104,6 @@ const connectToMongoDB = async () => {
       }
     });
 
-
     //! APPLY FOR A JOB
     // http://localhost:3000/api/v1/applications
     // example body:
@@ -102,8 +119,7 @@ const connectToMongoDB = async () => {
       }
     });
 
-
-  //! GET ALL APPLIED JOBS
+    //! GET ALL APPLIED JOBS
     // http://localhost:3000/api/v1/applications?email=example@gmail.com
     app.get("/api/v1/applications", async (req, res) => {
       try {
@@ -118,8 +134,6 @@ const connectToMongoDB = async () => {
         res.status(500).send({message: "An error occurred"});
       }
     });
-
-
 
     //! POST A JOB
     // http://localhost:3000/api/v1/jobs
@@ -136,7 +150,6 @@ const connectToMongoDB = async () => {
       }
     });
 
-
     //! GET ALL POSTED JOBS
     // http://localhost:3000/api/v1/postedjobs?email=alex@mail.com
     app.get("/api/v1/postedjobs", async (req, res) => {
@@ -151,10 +164,7 @@ const connectToMongoDB = async () => {
       }
     });
 
-
-
-
-   //! UPDATE A POSTED JOB
+    //! UPDATE A POSTED JOB
     // http://localhost:3000/api/v1/postedjobs/654713acdfaace3a2427f482
     app.patch("/api/v1/postedjobs/:id", async (req, res) => {
       try {
@@ -169,8 +179,6 @@ const connectToMongoDB = async () => {
       }
     });
 
-
-
     //! DELETE A POSTED JOB
     // http://localhost:3000/api/v1/postedjobs/654713acdfaace3a2427f482
     app.delete("/api/v1/postedjobs/:id", async (req, res) => {
@@ -184,8 +192,6 @@ const connectToMongoDB = async () => {
         res.status(500).send({message: "An error occurred"});
       }
     });
-
-
 
     //! GET ACCESS TOKEN (POST)
     // http://localhost:3000/api/v1/auth/accesstoken
@@ -222,7 +228,6 @@ const connectToMongoDB = async () => {
         res.status(500).send({message: "An error occurred"});
       }
     });
-
   } catch (error) {
     console.log(error);
   }
