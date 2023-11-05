@@ -209,7 +209,19 @@ const connectToMongoDB = async () => {
       }
     });
 
-
+    //! REMOVE ACCESS TOKEN (POST)
+    // http://localhost:3000/api/v1/auth/logout
+    app.post("/api/v1/auth/logout", async (req, res) => {
+      try {
+        const user = req.body;
+        if (user) {
+          res.clearCookie("token").send({success: true});
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
   } catch (error) {
     console.log(error);
