@@ -131,3 +131,5 @@ dist
 
 # xtra
 .vscode/*
+jobs.json
+default.js
