@@ -121,6 +121,20 @@ const connectToMongoDB = async () => {
 
 
 
+    //! POST A JOB
+    // http://localhost:3000/api/v1/jobs
+    // example body:
+    //  job = {company, logo, title, banner, poster, postermail, posted, desc, category, deadline, apllicants, salary }
+    app.post("/api/v1/jobs", async (req, res) => {
+      try {
+        const job = req.body;
+        const result = await jobsCollection.insertOne(job);
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
 
