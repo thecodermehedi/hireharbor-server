@@ -171,7 +171,19 @@ const connectToMongoDB = async () => {
 
 
 
-
+    //! DELETE A POSTED JOB
+    // http://localhost:3000/api/v1/postedjobs/654713acdfaace3a2427f482
+    app.delete("/api/v1/postedjobs/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const result = await jobsCollection.deleteOne(filter);
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
 
