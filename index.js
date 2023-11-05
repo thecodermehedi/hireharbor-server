@@ -35,7 +35,17 @@ const connectToMongoDB = async () => {
     const applicationsCollection = db.collection("applications");
     const categoriesCollection = db.collection("categories");
 
-
+    //! GET ALL JOB CATEGORIES
+    // http://localhost:3000/api/v1/categories
+    app.get("/api/v1/categories", async (req, res) => {
+      try {
+        const categories = await categoriesCollection.find().toArray();
+        res.send(categories);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
   } catch (error) {
