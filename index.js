@@ -103,7 +103,21 @@ const connectToMongoDB = async () => {
     });
 
 
-
+  //! GET ALL APPLIED JOBS
+    // http://localhost:3000/api/v1/applications?email=example@gmail.com
+    app.get("/api/v1/applications", async (req, res) => {
+      try {
+        const email = req.query.email;
+        const filter = {email: email};
+        const applications = await applicationsCollection
+          .find(filter)
+          .toArray();
+        res.send(applications);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
 
