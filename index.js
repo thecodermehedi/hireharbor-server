@@ -86,6 +86,46 @@ const connectToMongoDB = async () => {
       }
     });
 
+
+    //! APPLY FOR A JOB
+    // http://localhost:3000/api/v1/applications
+    // example body:
+    //  application = {user, email, resume, company, logo, title, banner, poster, postermail, posted, desc, category,deadline, apllicants, salary }
+    app.post("/api/v1/applications", async (req, res) => {
+      try {
+        const application = req.body;
+        const result = await applicationsCollection.insertOne(application);
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   } catch (error) {
     console.log(error);
   }
