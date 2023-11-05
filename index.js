@@ -72,6 +72,19 @@ const connectToMongoDB = async () => {
       }
     });
 
+    //! GET SINGLE JOB
+    // http://localhost:3000/api/v1/jobs/654713acdfaace3a2427f482
+    app.get("/api/v1/jobs/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const job = await jobsCollection.findOne(filter);
+        res.send(job);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
   } catch (error) {
     console.log(error);
