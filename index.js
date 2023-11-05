@@ -137,7 +137,19 @@ const connectToMongoDB = async () => {
     });
 
 
-
+    //! GET ALL POSTED JOBS
+    // http://localhost:3000/api/v1/postedjobs?email=alex@mail.com
+    app.get("/api/v1/postedjobs", async (req, res) => {
+      try {
+        const email = req.query.email;
+        const filter = {postermail: email};
+        const jobs = await jobsCollection.find(filter).toArray();
+        res.send(jobs);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
 
