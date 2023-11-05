@@ -28,6 +28,16 @@ const connectToMongoDB = async () => {
   try {
     await client.connect();
     console.log("Connected to MongoDB");
+
+    //! MongoDB Collections
+    const db = client.db("hireharborDB");
+    const jobsCollection = db.collection("jobs");
+    const applicationsCollection = db.collection("applications");
+    const categoriesCollection = db.collection("categories");
+
+
+
+
   } catch (error) {
     console.log(error);
   }
