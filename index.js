@@ -187,7 +187,27 @@ const connectToMongoDB = async () => {
 
 
 
-
+    //! GET ACCESS TOKEN (POST)
+    // http://localhost:3000/api/v1/auth/accesstoken
+    app.post("/api/v1/auth/accesstoken", async (req, res) => {
+      try {
+        const user = req.body;
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+          expiresIn: "24h",
+        });
+        res
+          .cookie("token", accessToken, {
+            httpOnly: false,
+            secure: true,
+            sameSite: "none",
+          })
+          .send({accessToken});
+        // .send({suceess: true});
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
 
 
 
