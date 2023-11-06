@@ -44,7 +44,7 @@ const connectToMongoDB = async () => {
     const categoriesCollection = db.collection("categories");
 
     //! VERIFY ACCESS TOKEN (MIDDLEWARE)
-    const verifyAccessToken = (req, res, next) => {
+    /*  const verifyAccessToken = (req, res, next) => {
       const token = req?.cookies?.token;
       if (!token) {
         return res.status(401).send({message: "Unauthorized access"});
@@ -56,8 +56,9 @@ const connectToMongoDB = async () => {
         req.user = decoded;
         next();
       });
-    };
+    }; */
 
+    //* ROUTE HANDLERS
     //! GET ALL JOB CATEGORIES
     // http://localhost:3000/api/v1/categories
     app.get("/api/v1/categories", async (req, res) => {
@@ -66,14 +67,14 @@ const connectToMongoDB = async () => {
         res.send(categories);
       } catch (error) {
         console.error(error);
-        res.status(500).send({message: "An error occurred"});
+        res.status(503).send({message: "Service Unavailable"});
       }
     });
 
     //! GET ALL JOBS
     // http://localhost:3000/api/v1/jobs situation 1
     // http://localhost:3000/api/v1/jobs?category=part-time situation 2
-    
+
     app.get("/api/v1/jobs", async (req, res) => {
       try {
         let query = {};
@@ -177,7 +178,10 @@ const connectToMongoDB = async () => {
         const id = req.params.id;
         const job = req.body;
         const filter = {_id: new ObjectId(id)};
-        const result = await jobsCollection.updateOne(filter, job);
+        const updateDocument = {
+          $set: job,
+        };
+        const result = await jobsCollection.updateOne(filter, updateDocument);
         res.send(result);
       } catch (error) {
         console.error(error);
@@ -223,22 +227,19 @@ const connectToMongoDB = async () => {
 
     //! REMOVE ACCESS TOKEN (POST)
     // http://localhost:3000/api/v1/auth/logout
-    app.post("/api/v1/auth/logout", async (req, res) => {
+    app.post("/api/v1/auth/logout", verifyAccessToken, async (req, res) => {
       try {
-        const user = req.body;
-        if (user) {
-          res.clearCookie("token").send({success: true});
-        }
+        res.clearCookie("token").send({success: true});
       } catch (error) {
         console.error(error);
         res.status(500).send({message: "An error occurred"});
       }
     });
   } catch (error) {
-    console.log(error);
+    console.error("Failed to connect to MongoDB", error);
+    process.exit(1);
   }
 };
-connectToMongoDB();
-
-app.get("/", (req, res) => res.send("HireHarbor Server is running..."));
-app.listen(port, () => console.log(`HireHarbor listening on port ${port}!`));
+connectToMongoDB().then(() => {
+  app.listen(port, () => console.log(`HireHarbor listening on port ${port}!`));
+});
