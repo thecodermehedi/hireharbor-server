@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 //! Middlewares
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://hireharbor.vercel.app"],
     credentials: true,
   })
 );
@@ -209,16 +209,16 @@ const connectToMongoDB = async () => {
       try {
         const user = req.body;
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: "24h",
+          expiresIn: "30d",
         });
         res
           .cookie("token", accessToken, {
             httpOnly: false,
-            secure: false,
-            sameSite: "none",
+            secure: true,
+            sameSite: "lax",
           })
-          .send({accessToken});
-        // .send({suceess: true});
+          // .send({accessToken});
+          .send({suceess: true});
       } catch (error) {
         console.error(error);
         res.status(500).send({message: "An error occurred"});
