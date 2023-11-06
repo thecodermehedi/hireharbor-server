@@ -73,6 +73,7 @@ const connectToMongoDB = async () => {
     //! GET ALL JOBS
     // http://localhost:3000/api/v1/jobs situation 1
     // http://localhost:3000/api/v1/jobs?category=part-time situation 2
+    
     app.get("/api/v1/jobs", async (req, res) => {
       try {
         let query = {};
@@ -96,8 +97,8 @@ const connectToMongoDB = async () => {
     });
 
     //! GET SINGLE JOB
-    // http://localhost:3000/api/v1/jobs/654713acdfaace3a2427f482
-    app.get("/api/v1/jobs/:id", async (req, res) => {
+    // http://localhost:3000/api/v1/job/654713acdfaace3a2427f482
+    app.get("/api/v1/job/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const filter = {_id: new ObjectId(id)};
