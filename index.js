@@ -10,7 +10,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 //! Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -204,7 +209,7 @@ const connectToMongoDB = async () => {
         res
           .cookie("token", accessToken, {
             httpOnly: false,
-            secure: true,
+            secure: false,
             sameSite: "none",
           })
           .send({accessToken});
