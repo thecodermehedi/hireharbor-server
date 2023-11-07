@@ -234,7 +234,7 @@ const connectToMongoDB = async () => {
 
     //! REMOVE ACCESS TOKEN (POST)
     // http://localhost:3000/api/v1/auth/logout
-    app.post("/api/v1/auth/logout", verifyAccessToken, async (req, res) => {
+    app.post("/api/v1/auth/logout", async (req, res) => {
       try {
         res.clearCookie("token").send({success: true});
       } catch (error) {
