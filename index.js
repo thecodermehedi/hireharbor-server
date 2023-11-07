@@ -86,7 +86,14 @@ const connectToMongoDB = async () => {
             company: 0,
             logo: 0,
             banner: 0,
-            desc: 0,
+            location: 0,
+            employmentType: 0,
+            experienceLevel: 0,
+            jobFunctions: 0,
+            industries: 0,
+            qualifications: 0,
+            responsibilities: 0,
+            aboutCompany: 0,
           },
         };
         const jobs = await jobsCollection.find(query, options).toArray();
