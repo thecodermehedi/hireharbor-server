@@ -118,6 +118,24 @@ const connectToMongoDB = async () => {
       }
     });
 
+    //! PATCH SINGLE JOB
+    // increase applicants by 1
+    // http://localhost:3000/api/v1/job/654713acdfaace3a2427f482
+    app.patch("/api/v1/job/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const updateDocument = {
+          $inc: {applicants: 1},
+        };
+        const result = await jobsCollection.updateOne(filter, updateDocument);
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({message: "An error occurred"});
+      }
+    });
+
     //! APPLY FOR A JOB
     // http://localhost:3000/api/v1/applications
     // example body:
