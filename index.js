@@ -176,8 +176,13 @@ const connectToMongoDB = async () => {
     // http://localhost:3000/api/v1/jobs
     // example body:
     //  job = {company, logo, title, banner, poster, postermail, posted, desc, category, deadline, apllicants, salary }
-    app.post("/api/v1/jobs", async (req, res) => {
+    app.post("/api/v1/jobs", verifyAccessToken, async (req, res) => {
       try {
+        const userEmail = req?.body?.postermail;
+        const tokenEmail = req?.user?.email;
+        if (userEmail !== tokenEmail) {
+          return res.status(403).send({message: "Invalid token"});
+        }
         const job = req.body;
         const result = await jobsCollection.insertOne(job);
         res.send(result);
