@@ -247,7 +247,7 @@ const connectToMongoDB = async () => {
             secure: process.env.NODE_ENV === "production" ? true : false,
             sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
           })
-          .send({suceess: true});
+          .send({success: true});
       } catch (error) {
         console.error(error);
         res.status(500).send({message: "An error occurred"});
@@ -256,8 +256,11 @@ const connectToMongoDB = async () => {
 
     //! REMOVE ACCESS TOKEN (POST)
     // http://localhost:3000/api/v1/auth/logout
-    app.post("/api/v1/auth/logout", async (req, res) => {
+    app.post("/api/v1/auth/logout", verifyAccessToken, async (req, res) => {
       try {
+        if (req.body.email !== req.user.email) {
+          return res.status(403).send({message: "Invalid token"});
+        }
         res
           .clearCookie("token", {
             maxAge: 0,
