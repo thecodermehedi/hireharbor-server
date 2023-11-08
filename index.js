@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 //! Middlewares
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://hireharbor.vercel.app"],
+    origin: ["https://hireharbor.vercel.app", "https://hireharbor-client.web.app", "https://hireharbor-client.firebaseapp.com"],
     credentials: true,
   })
 );
