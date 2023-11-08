@@ -49,7 +49,7 @@ const connectToMongoDB = async () => {
     const categoriesCollection = db.collection("categories");
 
     //! VERIFY ACCESS TOKEN (MIDDLEWARE)
-    /*  const verifyAccessToken = (req, res, next) => {
+    const verifyAccessToken = (req, res, next) => {
       const token = req?.cookies?.token;
       if (!token) {
         return res.status(401).send({message: "Unauthorized access"});
@@ -61,7 +61,7 @@ const connectToMongoDB = async () => {
         req.user = decoded;
         next();
       });
-    }; */
+    };
 
     //* ROUTE HANDLERS
     //! GET ALL JOB CATEGORIES
@@ -243,11 +243,10 @@ const connectToMongoDB = async () => {
         });
         res
           .cookie("token", accessToken, {
-            httpOnly: false,
-            secure: true,
-            sameSite: "lax",
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
           })
-          // .send({accessToken});
           .send({suceess: true});
       } catch (error) {
         console.error(error);
@@ -259,7 +258,13 @@ const connectToMongoDB = async () => {
     // http://localhost:3000/api/v1/auth/logout
     app.post("/api/v1/auth/logout", async (req, res) => {
       try {
-        res.clearCookie("token").send({success: true});
+        res
+          .clearCookie("token", {
+            maxAge: 0,
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+          })
+          .send({success: true});
       } catch (error) {
         console.error(error);
         res.status(500).send({message: "An error occurred"});
