@@ -13,7 +13,7 @@ const port = process.env.PORT || 3000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      // "http://localhost:5173",
       "https://hireharbor.vercel.app",
       "https://hireharbor-client.web.app",
       "https://hireharbor-client.firebaseapp.com",
@@ -49,19 +49,19 @@ const connectToMongoDB = async () => {
     const categoriesCollection = db.collection("categories");
 
     //! VERIFY ACCESS TOKEN (MIDDLEWARE)
-    const verifyAccessToken = (req, res, next) => {
-      const token = req?.cookies?.token;
-      if (!token) {
-        return res.status(401).send({message: "Unauthorized access"});
-      }
-      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) {
-          return res.status(403).send({message: "Invalid token"});
-        }
-        req.user = decoded;
-        next();
-      });
-    };
+    // const verifyAccessToken = (req, res, next) => {
+    //   const token = req?.cookies?.token;
+    //   if (!token) {
+    //     return res.status(401).send({message: "Unauthorized access"});
+    //   }
+    //   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    //     if (err) {
+    //       return res.status(403).send({message: "Invalid token"});
+    //     }
+    //     req.user = decoded;
+    //     next();
+    //   });
+    // };
 
     //* ROUTE HANDLERS
     //! GET ALL JOB CATEGORIES
@@ -92,13 +92,7 @@ const connectToMongoDB = async () => {
             logo: 0,
             banner: 0,
             location: 0,
-            employmentType: 0,
-            experienceLevel: 0,
-            jobFunctions: 0,
-            industries: 0,
-            qualifications: 0,
-            responsibilities: 0,
-            aboutCompany: 0,
+            desc: 0,
           },
         };
         const jobs = await jobsCollection.find(query, options).toArray();
@@ -176,13 +170,8 @@ const connectToMongoDB = async () => {
     // http://localhost:3000/api/v1/jobs
     // example body:
     //  job = {company, logo, title, banner, poster, postermail, posted, desc, category, deadline, apllicants, salary }
-    app.post("/api/v1/jobs", verifyAccessToken, async (req, res) => {
+    app.post("/api/v1/jobs", async (req, res) => {
       try {
-        const userEmail = req?.body?.postermail;
-        const tokenEmail = req?.user?.email;
-        if (userEmail !== tokenEmail) {
-          return res.status(403).send({message: "Invalid token"});
-        }
         const job = req.body;
         const result = await jobsCollection.insertOne(job);
         res.send(result);
